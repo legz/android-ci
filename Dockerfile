@@ -2,9 +2,6 @@ FROM ubuntu:18.04
 MAINTAINER Thomas P. <docker@legz.fr>
 
 
-ENV ANDROID_HOME /opt/android-sdk-linux
-ENV VERSION_SDK_TOOLS "4333796"
-
 
 # ------------------------------------------------------
 # --- Install required tools
@@ -38,6 +35,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
 
 # ------------------------------------------------------
 # --- Download Android SDK tools into $ANDROID_HOME
+
+ENV ANDROID_HOME /opt/android-sdk-linux
+ENV VERSION_SDK_TOOLS "4333796"
 
 RUN cd /opt \
     && wget -q https://dl.google.com/android/repository/sdk-tools-linux-${VERSION_SDK_TOOLS}.zip -O android-sdk-tools.zip \
