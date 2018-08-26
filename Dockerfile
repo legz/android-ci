@@ -2,7 +2,6 @@ FROM ubuntu:18.04
 MAINTAINER Thomas P. <docker@legz.fr>
 
 
-
 # ------------------------------------------------------
 # --- Install required tools
 
@@ -61,7 +60,30 @@ ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}
 RUN yes | sdkmanager --licenses
 
 # Platform tools
-## RUN sdkmanager "emulator" "tools" "platform-tools"
+RUN sdkmanager "emulator" "tools" "platform-tools"
+
+# SDKs
+# Please keep these in descending order!
+# The `yes` is for accepting all non-standard tool licenses.
+
+# Please keep all sections in descending order!
+RUN yes | sdkmanager \
+    "platforms;android-28" \
+    "platforms;android-27" \
+    "platforms;android-26" \
+    "platforms;android-25" \
+    "platforms;android-24" \
+    "platform-tools" \
+    "build-tools;28.0.1" \
+    "build-tools;27.0.3" \
+    "system-images;android-28;google_apis;x86" \
+    "system-images;android-27;google_apis;x86" \
+    "system-images;android-26;google_apis;x86" \
+    "extras;android;m2repository" \
+    "extras;google;m2repository" \
+    "extras;google;google_play_services" \
+    "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" \
+    "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.1" 
 
 
 # ------------------------------------------------------
