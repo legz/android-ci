@@ -9,16 +9,11 @@ RUN apt-get update -qq
 
 # Base (non android specific) tools
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
-  locales \
-  git \
   wget \
   python \
-  build-essential \
   zip \
   unzip \
-  imagemagick \
-  && locale-gen en_US.UTF-8
-ENV LANG="en_US.UTF-8" LANGUAGE="en_US.UTF-8" LC_ALL="en_US.UTF-8" 
+  imagemagick
 
 # Dependencies to execute Android builds
 RUN dpkg --add-architecture i386
@@ -33,26 +28,30 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
 
 
 # ------------------------------------------------------
-# --- Download Android SDK tools into $ANDROID_HOME
+# --- Download Android SDK tools
 
-ENV ANDROID_HOME /opt/android-sdk-linux
-ENV VERSION_SDK_TOOLS "4333796"
+# Up to date link for SDK TOOLS: https://developer.android.com/studio/index.html#command-tools
+ENV VERSION_SDK_TOOLS="4333796"
+ENV ANDROID_HOME="/android-sdk"
 
-RUN cd /opt \
-    && wget -q https://dl.google.com/android/repository/sdk-tools-linux-${VERSION_SDK_TOOLS}.zip -O android-sdk-tools.zip \
-    && unzip -q android-sdk-tools.zip -d ${ANDROID_HOME} \
-    && rm android-sdk-tools.zip
+# emulator is in its own path since 25.3.0 (not in sdk tools anymore)
+ENV PATH=$PATH:${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools 
 
-ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools
+# Install sdk tools
+RUN wget -q -O android-sdk-tools.zip https://dl.google.com/android/repository/sdk-tools-linux-${VERSION_SDK_TOOLS}.zip \
+  && unzip -q android-sdk-tools.zip -d ${ANDROID_HOME} \
+  && rm android-sdk-tools.zip
+
+# Workaround for
+# Warning: File /root/.android/repositories.cfg could not be loaded.
+RUN mkdir /root/.android && touch /root/.android/repositories.cfg
 
 
 # ------------------------------------------------------
 # --- Install Android SDKs and other build packages
 
-# Other tools and resources of Android SDK
-#  you should only install the packages you need!
-# To get a full list of available options you can use:
-#  sdkmanager --list
+# Other tools and resources of Android SDK. You should only install the packages you need!
+# To get a full list of available options you can use: sdkmanager --list
 
 # Accept licenses before installing components, no need to echo y for each component
 # License is valid for all the standard components in versions installed from this file
@@ -68,17 +67,10 @@ RUN sdkmanager "emulator" "tools" "platform-tools"
 
 # Please keep all sections in descending order!
 RUN yes | sdkmanager \
-    "platforms;android-28" \
     "platforms;android-27" \
-    "platforms;android-26" \
-    "platforms;android-25" \
-    "platforms;android-24" \
     "platform-tools" \
-    "build-tools;28.0.1" \
     "build-tools;27.0.3" \
-    "system-images;android-28;google_apis;x86" \
     "system-images;android-27;google_apis;x86" \
-    "system-images;android-26;google_apis;x86" \
     "extras;android;m2repository" \
     "extras;google;m2repository" \
     "extras;google;google_play_services" \
@@ -87,24 +79,15 @@ RUN yes | sdkmanager \
 
 
 # ------------------------------------------------------
-# --- Install Gradle from PPA
-# Not necessary to install Gradle because Android projects use the Gradle Wrapper (gradlew)
-
-# Gradle PPA
-# RUN apt-get update \
-#  && apt-get -y install gradle \
-# && gradle -v
-
-
-# ------------------------------------------------------
 # --- Install Fastlane
 
-RUN apt-get -y install ruby-dev
-RUN gem install fastlane --no-document \
-&& fastlane --version
+#RUN apt-get -y install ruby-dev
+#RUN gem install fastlane --no-document \
+#&& fastlane --version
 
 
 # ------------------------------------------------------
-# --- Cleanup 
+# --- Cleanup
 
-RUN apt-get clean
+#RUN apt-get clean \
+#  && rm -fr /var/lib/apt/lists/* /tmp/* /var/tmp/* 
