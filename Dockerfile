@@ -7,18 +7,14 @@ MAINTAINER Thomas P. <docker@legz.fr>
 
 RUN apt-get update -qq
 
-# Base (non android specific) tools
+# Dependencies to execute Android builds and screenshots tools
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
-  wget \
-  python \
-  zip \
-  unzip \
-  imagemagick
-
-# Dependencies to execute Android builds
-RUN apt-get update -qq
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
-  openjdk-8-jdk 
+    wget \
+    python \
+    zip \
+    unzip \
+    openjdk-8-jdk \
+    imagemagick
 
 
 # ------------------------------------------------------
@@ -33,8 +29,8 @@ ENV PATH=$PATH:${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/to
 
 # Install sdk tools
 RUN wget -q -O android-sdk-tools.zip https://dl.google.com/android/repository/sdk-tools-linux-${VERSION_SDK_TOOLS}.zip \
-  && unzip -q android-sdk-tools.zip -d ${ANDROID_HOME} \
-  && rm android-sdk-tools.zip
+    && unzip -q android-sdk-tools.zip -d ${ANDROID_HOME} \
+    && rm android-sdk-tools.zip
 
 # Workaround for
 # Warning: File /root/.android/repositories.cfg could not be loaded.
@@ -75,13 +71,14 @@ RUN yes | sdkmanager \
 # ------------------------------------------------------
 # --- Install Fastlane
 
-#RUN apt-get -y install ruby-dev
-#RUN gem install fastlane --no-document \
-#&& fastlane --version
+ENV LANG=en_US.UTF-8
+RUN apt-get -y install gcc g++ make ruby-dev
+RUN gem install fastlane --no-document \
+    && fastlane --version
 
 
 # ------------------------------------------------------
 # --- Cleanup
 
-#RUN apt-get clean \
-#  && rm -fr /var/lib/apt/lists/* /tmp/* /var/tmp/* 
+RUN apt-get clean \
+    && rm -fr /var/lib/apt/lists/* /tmp/* /var/tmp/* 
