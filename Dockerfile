@@ -57,10 +57,10 @@ RUN sdkmanager "emulator" "tools" "platform-tools"
 
 # Please keep all sections in descending order!
 RUN yes | sdkmanager \
-    "platforms;android-27" \
+    "platforms;android-28" \
     "platform-tools" \
     "build-tools;27.0.3" \
-    "system-images;android-27;google_apis;x86" \
+    "system-images;android-28;google_apis;x86_64" \
     "extras;android;m2repository" \
     "extras;google;m2repository" \
     "extras;google;google_play_services" \
