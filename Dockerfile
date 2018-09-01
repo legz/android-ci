@@ -59,7 +59,7 @@ RUN sdkmanager "emulator" "tools" "platform-tools"
 RUN yes | sdkmanager \
     "platforms;android-28" \
     "platform-tools" \
-    "build-tools;27.0.3" \
+    "build-tools;28.0.2" \
     "system-images;android-28;google_apis;x86_64" \
     "extras;android;m2repository" \
     "extras;google;m2repository" \
