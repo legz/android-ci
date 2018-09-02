@@ -8,7 +8,7 @@ MAINTAINER Thomas P. <docker@legz.fr>
 RUN apt-get update -qq
 
 # Dependencies to execute Android builds and screenshots tools
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -qq \
     wget \
     python \
     zip \
@@ -71,10 +71,17 @@ RUN yes | sdkmanager \
 # ------------------------------------------------------
 # --- Install Fastlane
 
-ENV LANG=en_US.UTF-8
+ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en'
 RUN apt-get -y install gcc g++ make ruby-dev
 RUN gem install fastlane --no-document \
     && fastlane --version
+
+
+# ------------------------------------------------------
+# --- Install AndroidViewClient (https://github.com/dtmilano/AndroidViewClient)
+
+RUN apt-get -y install python-pip
+RUN pip install androidviewclient
 
 
 # ------------------------------------------------------
