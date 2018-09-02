@@ -78,6 +78,13 @@ RUN gem install fastlane --no-document \
 
 
 # ------------------------------------------------------
+# --- Install AndroidViewClient (https://github.com/dtmilano/AndroidViewClient)
+
+RUN apt-get -y install python-pip
+RUN pip install androidviewclient
+
+
+# ------------------------------------------------------
 # --- Cleanup
 
 RUN apt-get clean \
